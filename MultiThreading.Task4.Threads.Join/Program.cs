@@ -65,9 +65,8 @@ namespace MultiThreading.Task4.Threads.Join
                 Thread thread = new Thread(ProcessNumberWithSemaphore);
                 thread.Start(newNumber);
                 Console.WriteLine($"{newNumber} thread works");
-                Console.WriteLine($"{newNumber} thread released");
                 semaphore.Release();
-
+                Console.WriteLine($"Semaphore released from {newNumber} thread ");
             }
         }
     }
