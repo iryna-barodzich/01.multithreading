@@ -45,15 +45,16 @@ namespace MultiThreading.Task5.Threads.SharedCollection
                 for (int i = 1; i < 10; ++i)
                 {
                     bag.Add(i);
-                    firstEvent.Set();
+                    //firstEvent.Set();
+                    Task.Run(() => Read()).Wait();
                 }
             });
 
             Task t2 = Task.Factory.StartNew(() =>
             {
 
-                firstEvent.WaitOne();
-                Read();
+              //  firstEvent.WaitOne();
+              //  Read();
             });
             Task.WaitAll(t1, t2);
 
