@@ -10,11 +10,14 @@
  */
 
 using System;
+using System.Threading;
 
 namespace MultiThreading.Task4.Threads.Join
 {
     class Program
     {
+        private const int NumberOfThreads = 10;
+        static Semaphore semaphore = new Semaphore(NumberOfThreads, NumberOfThreads);
         static void Main(string[] args)
         {
             Console.WriteLine("4.	Write a program which recursively creates 10 threads.");
@@ -26,9 +29,46 @@ namespace MultiThreading.Task4.Threads.Join
 
             Console.WriteLine();
 
-            // feel free to add your code
+            Console.WriteLine("Create Threads With Join");
+            ProcessNumberWithJoin(NumberOfThreads + 1);
+
+            Console.WriteLine("Create ThreadPool With Semaphore");
+            CreateThreadPoolWithSemaphore(NumberOfThreads + 1);
 
             Console.ReadLine();
+        }
+
+        static void ProcessNumberWithJoin(object number)
+        {
+            var newNumber = (int)number - 1;
+            if(newNumber > 0)
+            {
+                Thread thread = new Thread(ProcessNumberWithJoin);
+                thread.Start(newNumber);
+                Console.WriteLine($"{newNumber} thread works");
+                thread.Join();
+                Console.WriteLine($"{newNumber} thread task completed");
+            }
+        }
+
+        static void CreateThreadPoolWithSemaphore(int number)
+        {
+            ThreadPool.QueueUserWorkItem(new WaitCallback(ProcessNumberWithSemaphore), number);
+        }
+
+        static void ProcessNumberWithSemaphore(object number)
+        {
+            var newNumber = (int)number - 1;
+            if (newNumber > 0)
+            {
+                semaphore.WaitOne();
+                Thread thread = new Thread(ProcessNumberWithSemaphore);
+                thread.Start(newNumber);
+                Console.WriteLine($"{newNumber} thread works");
+                Console.WriteLine($"{newNumber} thread released");
+                semaphore.Release();
+
+            }
         }
     }
 }
