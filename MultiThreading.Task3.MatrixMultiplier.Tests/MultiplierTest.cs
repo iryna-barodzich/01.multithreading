@@ -19,12 +19,9 @@ namespace MultiThreading.Task3.MatrixMultiplier.Tests
         [TestMethod]
         public void ParallelEfficiencyTest()
         {
-            // todo: implement a test method to check the size of the matrix which makes parallel multiplication more effective than
-            // todo: the regular one
-
             int matrixSize = 0;
 
-            for (int i = 1; i <= 100000; i++) {
+            for (int i = 1; i <= 255; i++) {
                 var firstMatrix = new Matrix(i, i, true);
                 var secondMatrix = new Matrix(i, i, true);
                 var m1 = new MatricesMultiplier();

@@ -1,6 +1,4 @@
 ﻿using MultiThreading.Task3.MatrixMultiplier.Matrices;
-using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 
 namespace MultiThreading.Task3.MatrixMultiplier.Multipliers
@@ -11,16 +9,13 @@ namespace MultiThreading.Task3.MatrixMultiplier.Multipliers
         {
             var resultMatrix = new Matrix(m1.RowCount, m2.ColCount);
 
-            List<int> m1RowCountList = Enumerable.Range(0, (int)m1.RowCount).ToList();
-            Parallel.ForEach(m1RowCountList, i =>
+            Parallel.For(0, m1.RowCount, i =>
             {
-                List<int> m2ColCountList = Enumerable.Range(0, (int)m2.ColCount).ToList();
-                Parallel.ForEach(m2ColCountList, j =>
+                Parallel.For(0, m2.ColCount, j =>
                 {
                     long sum = 0;
 
-                    List<int> m1ColCountList = Enumerable.Range(0, (int)m1.ColCount).ToList();
-                    Parallel.ForEach(m1ColCountList, k =>
+                    Parallel.For(0, m1.ColCount, k =>
                     {
                         sum += m1.GetElement(i, k) * m2.GetElement(k, j);
                     });

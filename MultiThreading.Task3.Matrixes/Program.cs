@@ -7,6 +7,7 @@
  */
 
 using System;
+using System.Diagnostics;
 using MultiThreading.Task3.MatrixMultiplier.Matrices;
 using MultiThreading.Task3.MatrixMultiplier.Multipliers;
 
@@ -19,7 +20,7 @@ namespace MultiThreading.Task3.MatrixMultiplier
             Console.WriteLine("3.	Write a program, which multiplies two matrices and uses class Parallel. ");
             Console.WriteLine();
 
-            Console.WriteLine("Enter matrix size:");
+            Console.WriteLine("Enter matrix size (value from 1 to 255:");
             byte matrixSize = Convert.ToByte(Console.ReadLine());
             // const byte matrixSize = 7; // todo: use any number you like or enter from console
             CreateAndProcessMatrices(matrixSize);
@@ -32,7 +33,14 @@ namespace MultiThreading.Task3.MatrixMultiplier
             var firstMatrix = new Matrix(sizeOfMatrix, sizeOfMatrix, true);
             var secondMatrix = new Matrix(sizeOfMatrix, sizeOfMatrix, true);
 
+            var stopwatch = Stopwatch.StartNew();
             IMatrix resultMatrix = new MatricesMultiplier().Multiply(firstMatrix, secondMatrix);
+            Console.WriteLine("Normal: " + stopwatch.Elapsed);
+            stopwatch.Stop();
+
+            stopwatch.Start();
+            IMatrix resultMatrix2 = new MatricesMultiplier().Multiply(firstMatrix, secondMatrix);   
+            Console.WriteLine("Parallel: " + stopwatch.Elapsed);
 
             Console.WriteLine("firstMatrix:");
             firstMatrix.Print();
