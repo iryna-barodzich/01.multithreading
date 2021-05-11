@@ -42,6 +42,8 @@ namespace MultiThreading.Task2.Chaining
             Task<int[]> taskThree = taskTwo.ContinueWith(intArray => SortArray(intArray.Result));
 
             Task<int> taskFour = taskThree.ContinueWith(intArray => GetAverage(intArray.Result));
+
+            taskFour.Wait();
         }
 
         static int[] GetArrayOfIntegers()
