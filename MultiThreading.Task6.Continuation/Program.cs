@@ -90,6 +90,7 @@ namespace MultiThreading.Task6.Continuation
             {
                 var r = new Random();
                 var b = r.Next(0, 1);
+                Console.WriteLine($"Parent thread: {Thread.CurrentThread.ManagedThreadId}");
                 Console.WriteLine($"Trying divide on {b}.");
                 int a = 1 / b;
                 Console.WriteLine("Success!");
@@ -98,7 +99,7 @@ namespace MultiThreading.Task6.Continuation
             var task2 = task.ContinueWith(
                 antecedent =>
                 {
-                    Console.WriteLine("Parent task faulted.");
+                    Console.WriteLine($"Parent task status: {task.Status}. Current thread: {Thread.CurrentThread.ManagedThreadId}");
                     Console.WriteLine("Cannot divide on zero!");
                 }, TaskContinuationOptions.ExecuteSynchronously | TaskContinuationOptions.OnlyOnFaulted);
 
@@ -135,10 +136,10 @@ namespace MultiThreading.Task6.Continuation
             }, token).ContinueWith((t) =>
             {
                 Console.WriteLine("Parent task status: " + t.Status);
-                Console.WriteLine("You have canceled the task");
+                Console.WriteLine($"Current thread is thread pool: {Thread.CurrentThread.IsThreadPoolThread}");
             }, 
             CancellationToken.None,
-            TaskContinuationOptions.LongRunning,
+            TaskContinuationOptions.OnlyOnCanceled | TaskContinuationOptions.LongRunning,
             TaskScheduler.Default);
 
             new Task(() =>

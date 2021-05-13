@@ -43,14 +43,13 @@ namespace MultiThreading.Task4.Threads.Join
             var newNumber = (int)number - 1;
             if(newNumber > 0)
             {
-                Console.WriteLine($"{newNumber} - iteration");
                 Thread thread = new Thread(ProcessNumberWithJoin);
                 thread.Start(newNumber);
 
-                Console.WriteLine($"{newNumber} - thread # {Thread.CurrentThread.ManagedThreadId} works");
+                Console.WriteLine($"Thread # {Thread.CurrentThread.ManagedThreadId} works");
                 Thread.Sleep(1000);
                 thread.Join();
-                Console.WriteLine($"{newNumber} - thread # {Thread.CurrentThread.ManagedThreadId} task completed");
+                Console.WriteLine($"Thread # {Thread.CurrentThread.ManagedThreadId} task completed");
             }
         }
 
@@ -66,12 +65,12 @@ namespace MultiThreading.Task4.Threads.Join
             {
                 Thread thread = new Thread(ProcessNumberWithSemaphore);
                 thread.Start(newNumber);
-                Console.WriteLine($"{newNumber} thread works and waits for the semaphore");
+                Console.WriteLine($"Thread # {Thread.CurrentThread.ManagedThreadId} works");
                 semaphore.WaitOne();
-                Console.WriteLine($"{newNumber} thread enters the semaphore.");
+                Console.WriteLine($"Thread # {Thread.CurrentThread.ManagedThreadId} thread enters the semaphore.");
                 Thread.Sleep(1000);
                 semaphore.Release();
-                Console.WriteLine($"Semaphore released from {newNumber} thread ");
+                Console.WriteLine($"Semaphore released from thread # {Thread.CurrentThread.ManagedThreadId} ");
             }
         }
     }
