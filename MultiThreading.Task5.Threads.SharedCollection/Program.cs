@@ -14,10 +14,7 @@ namespace MultiThreading.Task5.Threads.SharedCollection
 {
     class Program
     {
-        static EventWaitHandle firstEvent = new AutoResetEvent(false);
-        static EventWaitHandle secondEvent = new AutoResetEvent(false);
         static ConcurrentBag<int> bag = new ConcurrentBag<int>();
-        static int CollectionSize = 10;
 
         static void Main(string[] args)
         {
@@ -26,37 +23,18 @@ namespace MultiThreading.Task5.Threads.SharedCollection
             Console.WriteLine("Use Thread, ThreadPool or Task classes for thread creation and any kind of synchronization constructions.");
             Console.WriteLine();
 
-            /*var readingTask = Task.Factory.StartNew(Read);
-
-            Task.Factory.StartNew(() =>
-            {
-                for(int i = 0; i < CollectionSize; i++)
-                {
-                    list.Add(i);
-                    readingTask.Wait();
-                }
-            });*/
-
-
             object locker = new object();
 
-            Task t1 = Task.Factory.StartNew(() =>
+            Task task1 = Task.Factory.StartNew(() =>
             {
                 for (int i = 1; i < 10; ++i)
                 {
                     bag.Add(i);
-                    //firstEvent.Set();
                     Task.Run(() => Read()).Wait();
                 }
             });
 
-            Task t2 = Task.Factory.StartNew(() =>
-            {
-
-              //  firstEvent.WaitOne();
-              //  Read();
-            });
-            Task.WaitAll(t1, t2);
+            task1.Wait();
 
             Console.ReadLine();
         }

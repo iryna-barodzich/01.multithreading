@@ -64,6 +64,7 @@ namespace MultiThreading.Task6.Continuation
                 int a = 1 / b;
                 Console.WriteLine("Success!");
             });
+
             var task2 = task.ContinueWith(
                 antecedent =>
                 {
