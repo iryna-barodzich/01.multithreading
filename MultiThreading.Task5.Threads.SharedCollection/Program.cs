@@ -14,7 +14,12 @@ namespace MultiThreading.Task5.Threads.SharedCollection
 {
     class Program
     {
-        static ConcurrentBag<int> bag = new ConcurrentBag<int>();
+        static List<int> items = new List<int>();
+        const int numberOfItems = 10;
+        static ReaderWriterLockSlim readerWriterLockSlim = new ReaderWriterLockSlim();
+        static AutoResetEvent autoResetEvent1 = new AutoResetEvent(false);
+        static AutoResetEvent autoResetEvent2 = new AutoResetEvent(false);
+        static object locker = new object();
 
         static void Main(string[] args)
         {
@@ -23,30 +28,39 @@ namespace MultiThreading.Task5.Threads.SharedCollection
             Console.WriteLine("Use Thread, ThreadPool or Task classes for thread creation and any kind of synchronization constructions.");
             Console.WriteLine();
 
-            object locker = new object();
+            var task1 = Task.Factory.StartNew(Write);
+            var task2 = Task.Factory.StartNew(Read);
 
-            Task task1 = Task.Factory.StartNew(() =>
-            {
-                for (int i = 1; i < 10; ++i)
-                {
-                    bag.Add(i);
-                    Task.Run(() => Read()).Wait();
-                }
-            });
-
-            task1.Wait();
+            Task.WaitAll(task1, task2);
 
             Console.ReadLine();
         }
 
+        static void Write()
+        {
+            for (int i = 1; i < 10; ++i)
+            {
+                lock(locker)
+                {
+                    items.Add(i);
+                }
+                autoResetEvent1.Set();
+                autoResetEvent2.WaitOne();
+            }
+        }
+
         static void Read()
         {
-            Console.WriteLine("Reading list:");
-            foreach (var item in bag)
+            for (int i = 1; i < 10; ++i)
             {
-                Console.WriteLine(item);
-            }
+                autoResetEvent1.WaitOne();
+                lock (locker)
+                {
+                    Console.WriteLine(string.Join(",", items));
+                }
+                autoResetEvent2.Set();
 
+            }
         }
     }
 }
