@@ -19,8 +19,6 @@ namespace MultiThreading.Task3.MatrixMultiplier.Tests
         [TestMethod]
         public void ParallelEfficiencyTest()
         {
-            int matrixSize = 0;
-
             for (int i = 1; i <= 255; i++) {
                 var firstMatrix = new Matrix(i, i, true);
                 var secondMatrix = new Matrix(i, i, true);
@@ -30,7 +28,8 @@ namespace MultiThreading.Task3.MatrixMultiplier.Tests
                 TimeSpan timeSpan2 = Time(() => m2.Multiply(firstMatrix, secondMatrix));
                 if (timeSpan2 < timeSpan1)
                 {
-                    matrixSize = i;
+                    // minimal size for which parallel is faster
+                    var minMatrixSize = i;
                     break;
                 }
             }

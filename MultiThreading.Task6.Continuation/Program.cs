@@ -78,7 +78,7 @@ namespace MultiThreading.Task6.Continuation
             }
             catch (OperationCanceledException)
             {
-                Console.WriteLine("Task cancelled");
+                Console.WriteLine("Task task finished without success");
             }
 
         }
@@ -108,7 +108,7 @@ namespace MultiThreading.Task6.Continuation
             }
             catch (OperationCanceledException)
             {
-                Console.WriteLine("Task cancelled");
+                Console.WriteLine("Task faulted");
             }
 
         }
@@ -138,7 +138,7 @@ namespace MultiThreading.Task6.Continuation
                 Console.WriteLine("You have canceled the task");
             }, 
             CancellationToken.None,
-            TaskContinuationOptions.OnlyOnCanceled,
+            TaskContinuationOptions.LongRunning,
             TaskScheduler.Default);
 
             new Task(() =>
