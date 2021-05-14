@@ -16,7 +16,6 @@ namespace MultiThreading.Task5.Threads.SharedCollection
     {
         static List<int> items = new List<int>();
         const int numberOfItems = 10;
-        static ReaderWriterLockSlim readerWriterLockSlim = new ReaderWriterLockSlim();
         static AutoResetEvent autoResetEvent1 = new AutoResetEvent(false);
         static AutoResetEvent autoResetEvent2 = new AutoResetEvent(false);
         static object locker = new object();
@@ -38,7 +37,7 @@ namespace MultiThreading.Task5.Threads.SharedCollection
 
         static void Write()
         {
-            for (int i = 1; i < 10; ++i)
+            for (int i = 1; i < numberOfItems; ++i)
             {
                 lock(locker)
                 {
@@ -51,7 +50,7 @@ namespace MultiThreading.Task5.Threads.SharedCollection
 
         static void Read()
         {
-            for (int i = 1; i < 10; ++i)
+            for (int i = 1; i < numberOfItems; ++i)
             {
                 autoResetEvent1.WaitOne();
                 lock (locker)

@@ -33,21 +33,26 @@ namespace MultiThreading.Task3.MatrixMultiplier
             var firstMatrix = new Matrix(sizeOfMatrix, sizeOfMatrix, true);
             var secondMatrix = new Matrix(sizeOfMatrix, sizeOfMatrix, true);
 
-            var stopwatch = Stopwatch.StartNew();
-            IMatrix resultMatrix = new MatricesMultiplier().Multiply(firstMatrix, secondMatrix);
-            Console.WriteLine("Normal: " + stopwatch.Elapsed);
-            stopwatch.Stop();
+            Console.WriteLine("Normal");
+            MeasureTime(() => new MatricesMultiplier().Multiply(firstMatrix, secondMatrix));
 
-            stopwatch.Start();
-            IMatrix resultMatrix2 = new MatricesMultiplier().Multiply(firstMatrix, secondMatrix);   
-            Console.WriteLine("Parallel: " + stopwatch.Elapsed);
+            Console.WriteLine("Parallel");
+            MeasureTime(() => new MatricesMultiplierParallel().Multiply(firstMatrix, secondMatrix));
 
             Console.WriteLine("firstMatrix:");
             firstMatrix.Print();
             Console.WriteLine("secondMatrix:");
             secondMatrix.Print();
             Console.WriteLine("resultMatrix:");
-            resultMatrix.Print();
+            new MatricesMultiplier().Multiply(firstMatrix, secondMatrix).Print();
+        }
+
+        private static void MeasureTime(Action action)
+        {
+            var timer = Stopwatch.StartNew();
+            action();
+            timer.Stop();
+            Console.WriteLine(timer.Elapsed);
         }
     }
 }

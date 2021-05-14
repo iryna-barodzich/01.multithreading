@@ -24,8 +24,8 @@ namespace MultiThreading.Task3.MatrixMultiplier.Tests
                 var secondMatrix = new Matrix(i, i, true);
                 var m1 = new MatricesMultiplier();
                 var m2 = new MatricesMultiplierParallel();
-                TimeSpan timeSpan1 = Time(() => m1.Multiply(firstMatrix, secondMatrix));
-                TimeSpan timeSpan2 = Time(() => m2.Multiply(firstMatrix, secondMatrix));
+                TimeSpan timeSpan1 = MeasureTime(() => m1.Multiply(firstMatrix, secondMatrix));
+                TimeSpan timeSpan2 = MeasureTime(() => m2.Multiply(firstMatrix, secondMatrix));
                 if (timeSpan2 < timeSpan1)
                 {
                     // minimal size for which parallel is faster
@@ -84,10 +84,10 @@ namespace MultiThreading.Task3.MatrixMultiplier.Tests
             Assert.AreEqual(728, multiplied.GetElement(2, 2));
         }
 
-        TimeSpan Time(Action toTime)
+        TimeSpan MeasureTime(Action action)
         {
             var timer = Stopwatch.StartNew();
-            toTime();
+            action();
             timer.Stop();
             return timer.Elapsed;
         }
