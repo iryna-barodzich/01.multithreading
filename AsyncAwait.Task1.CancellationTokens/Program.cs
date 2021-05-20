@@ -60,17 +60,15 @@ namespace AsyncAwait.Task1.CancellationTokens
             Console.ReadLine();
         }
 
-        private static async Task CalculateSum(int n, CancellationToken token)
+        private static void CalculateSum(int n, CancellationToken token)
         {
             Console.WriteLine($"The task for {n} started... Enter N to cancel the request:");
-            long sum = 0;
-            sum = await Calculator.Calculate(n, token);
+            long sum = Calculator.Calculate(n, token);
 
             if (token.IsCancellationRequested)
             {
                 Console.WriteLine($"Sum for {n} cancelled...");
                 cancelTokenSource.Dispose();
-                sum = 0;
 
             } else
             {

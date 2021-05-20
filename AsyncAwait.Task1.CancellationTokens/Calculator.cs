@@ -6,20 +6,43 @@ namespace AsyncAwait.Task1.CancellationTokens
 {
     static class Calculator
     {
-        private static long sum = 0;
         private static object sync = new object();
+
+        public static long Calculate(int n, CancellationToken token)
+        {
+            long sum = 0;
+
+            lock (sync)
+            {
+                for (int i = 0; i < n; i++)
+                {
+                    if(token.IsCancellationRequested) {
+                        return sum;
+                    }
+                    // i + 1 is to allow 2147483647 (Max(Int32)) 
+                    sum = sum + (i + 1);
+                    Thread.Sleep(10);
+                }
+            }
+
+
+            return sum;
+        }
         // todo: change this method to support cancellation token
-        public async static Task<long> Calculate(int n, CancellationToken token)
+        /*public async static Task<long> Calculate(int n, CancellationToken token)
         {
             var tasks = new List<Task>();
 
-            for (int i = 0; i < n; i++)
+            lock (sync)
             {
-                if(token.IsCancellationRequested)
+                for (int i = 0; i < n; i++)
                 {
-                    return sum;
+                    if (token.IsCancellationRequested)
+                    {
+                        return sum;
+                    }
+                    tasks.Add(ProcessSum(i));
                 }
-                tasks.Add(ProcessSum(i));
             }
 
             await Task.WhenAll(tasks.ToArray());
@@ -39,6 +62,6 @@ namespace AsyncAwait.Task1.CancellationTokens
                     sum = sum + (i + 1);
                 }
             });
-        }
+        }*/
     }
 }
