@@ -41,7 +41,6 @@ namespace AsyncAwait.Task1.CancellationTokens
                     token = cancelTokenSource.Token;
                     task1 = new Task(() => CalculateSum(n, token));
                     task1.Start();
-                    //await CalculateSum(n);
                 }
                 else
                 {
