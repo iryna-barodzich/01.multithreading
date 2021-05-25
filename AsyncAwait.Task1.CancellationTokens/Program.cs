@@ -16,8 +16,6 @@ namespace AsyncAwait.Task1.CancellationTokens
     class Program
     {
         private static CancellationTokenSource cancelTokenSource;
-        private static CancellationToken token;
-        private static object locker = new object();
         /// <summary>
         /// The Main method should not be changed at all.
         /// </summary>
@@ -34,13 +32,18 @@ namespace AsyncAwait.Task1.CancellationTokens
             string input = Console.ReadLine();
             while (input.Trim().ToUpper() != "Q")
             {
-                Task task1 = new Task(() => { });
                 if (int.TryParse(input, out int n))
                 {
+                    if(cancelTokenSource != null)
+                    {
+                        cancelTokenSource.Cancel();
+                        cancelTokenSource.Dispose();
+ 
+                    }
+
                     cancelTokenSource = new CancellationTokenSource();
-                    token = cancelTokenSource.Token;
-                    task1 = new Task(() => CalculateSum(n, token));
-                    task1.Start();
+                    var token = cancelTokenSource.Token;
+                    CalculateSum(n, token);
                 }
                 else
                 {
@@ -49,30 +52,26 @@ namespace AsyncAwait.Task1.CancellationTokens
                 }
 
                 input = Console.ReadLine();
-                if(!task1.IsCompleted)
-                {
-                    cancelTokenSource.Cancel();
-                }
+
             }
 
             Console.WriteLine("Press any key to continue");
             Console.ReadLine();
         }
 
-        private static void CalculateSum(int n, CancellationToken token)
+        private static async Task CalculateSum(int n, CancellationToken token)
         {
             Console.WriteLine($"The task for {n} started... Enter N to cancel the request:");
-            long sum = Calculator.Calculate(n, token);
+            long sum = await Calculator.Calculate(n, token);
 
             if (token.IsCancellationRequested)
             {
                 Console.WriteLine($"Sum for {n} cancelled...");
-                cancelTokenSource.Dispose();
-
             } else
             {
                 Console.WriteLine($"Sum for {n} = {sum}.");
             }
+
 
             Console.WriteLine();
             Console.WriteLine("Enter N: ");  
