@@ -27,9 +27,9 @@ namespace Client
                      | NotifyFilters.Security
                      | NotifyFilters.Size;
 
-                watcher.Changed += OnChanged;
+               // watcher.Changed += OnChanged;
                 watcher.Created += OnCreated;
-                watcher.Renamed += OnRenamed;
+              //  watcher.Renamed += OnRenamed;
 
                 watcher.Filter = "*.txt";
                 watcher.IncludeSubdirectories = true;
@@ -59,34 +59,36 @@ namespace Client
 
         private static void Client(object obj)
         {
-            using (var clientQueue = new MessageQueue(ServerQueueName, QueueAccessMode.Send))
+            using (var serverQueue = new MessageQueue(ServerQueueName, QueueAccessMode.Send))
             {
+                serverQueue.MessageReadPropertyFilter.SetAll();
+                serverQueue.MessageReadPropertyFilter.IsFirstInTransaction = true;
+                serverQueue.MessageReadPropertyFilter.IsLastInTransaction = true;
+
                 var filename = obj.ToString();
                 var bytes = FileToByteArray(obj.ToString());
                 var chunkCount = 3;
                 var size = bytes.Length;
+                var blockSize = 4;
 
-                var bufferArray = new byte[chunkCount][];
+                byte[][] blocks = new byte[(bytes.Length + 4 - 1) / blockSize][];
 
-                for (var i = 0; i < chunkCount; i++)
+                for (int i = 0, j = 0; i < blocks.Length; i++, j += blockSize)
                 {
-                    bufferArray[i] = new byte[1000];
-                    for (var j = 0; j < 1000 && i * chunkCount + j < size; j++)
-                    {
-                        bufferArray[i][j] = bytes[i * chunkCount + j];
-                    }
+                    blocks[i] = new byte[Math.Min(blockSize, bytes.Length - j)];
+                    Array.Copy(bytes, j, blocks[i], 0, blocks[i].Length);
                 }
 
-                var transaction = new MessageQueueTransaction();
 
+                var transaction = new MessageQueueTransaction();
                 try
                 {
                     transaction.Begin();
-                    foreach(var part in bufferArray)
+                    foreach(var part in blocks)
                     {
                         Message message = new Message(part, new BinaryMessageFormatter());
                         message.Label = filename;
-                        clientQueue.Send(message);
+                        serverQueue.Send(message);
                     }
                     transaction.Commit();
                 }

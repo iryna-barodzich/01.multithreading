@@ -20,7 +20,8 @@ namespace Server
         {
             if (!MessageQueue.Exists(ServerQueueName))
             {
-                MessageQueue.Create(ServerQueueName);
+                MessageQueue.Create(ServerQueueName, true);
+
             }
 
             stopWorkEvent = new ManualResetEvent(false);
@@ -35,6 +36,9 @@ namespace Server
             using (var serverQueue = new MessageQueue(ServerQueueName))
             {
                 serverQueue.Formatter = new BinaryMessageFormatter();
+                serverQueue.MessageReadPropertyFilter.SetAll();
+                serverQueue.MessageReadPropertyFilter.IsFirstInTransaction = true;
+                serverQueue.MessageReadPropertyFilter.IsLastInTransaction = true;
 
                 while (true)
                 {
@@ -47,8 +51,19 @@ namespace Server
                     var message = serverQueue.EndPeek(asyncReceive);
                     serverQueue.ReceiveById(message.Id);
                     var filename = message.Label.Split('\\').Last();
+                    var a = message.IsFirstInTransaction;
+                    var b = message.IsLastInTransaction;
+
+
                     File.WriteAllBytes(Path.Combine(ServerDirectoryName, filename), (byte[])message.Body);
                     Console.WriteLine($"Server received file {filename} and save to directory {ServerDirectoryName}");
+
+                    var enumerator = serverQueue.GetMessageEnumerator2();
+
+
+                    var formatter = new BinaryMessageFormatter();
+
+
                 }
             }
 
