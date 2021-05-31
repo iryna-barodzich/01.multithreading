@@ -1,11 +1,7 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.IO;
-using System.Linq;
 using System.Messaging;
-using System.Text;
 using System.Threading;
-using System.Threading.Tasks;
 
 namespace Client
 {
@@ -28,9 +24,7 @@ namespace Client
                      | NotifyFilters.Security
                      | NotifyFilters.Size;
 
-               // watcher.Changed += OnChanged;
                 watcher.Created += OnCreated;
-              //  watcher.Renamed += OnRenamed;
 
                 watcher.Filter = "*.txt";
                 watcher.IncludeSubdirectories = true;
@@ -82,11 +76,12 @@ namespace Client
                 try
                 {
                     transaction.Begin();
-                    foreach(var part in blocks)
+                    //foreach(var part in blocks)
+                    for(int i = 0; i < blocks.Length; i++)
                     {
-                        Message message = new Message(part, new BinaryMessageFormatter());
-                        message.Label = filename;
-                        serverQueue.Send(message);
+                        Message message = new Message(blocks[i], new BinaryMessageFormatter());
+                        message.Label = $"{filename}|{i+1}|{blocks.Length}";
+                        serverQueue.Send(message, MessageQueueTransactionType.Automatic);
                     }
                     transaction.Commit();
                 }

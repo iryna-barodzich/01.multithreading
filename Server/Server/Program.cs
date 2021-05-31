@@ -3,9 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Messaging;
-using System.Text;
 using System.Threading;
-using System.Threading.Tasks;
 
 namespace Server
 {
@@ -20,8 +18,7 @@ namespace Server
         {
             if (!MessageQueue.Exists(ServerQueueName))
             {
-                MessageQueue.Create(ServerQueueName, true);
-
+                MessageQueue.Create(ServerQueueName);
             }
 
             stopWorkEvent = new ManualResetEvent(false);
@@ -39,6 +36,7 @@ namespace Server
                 serverQueue.MessageReadPropertyFilter.SetAll();
                 serverQueue.MessageReadPropertyFilter.IsFirstInTransaction = true;
                 serverQueue.MessageReadPropertyFilter.IsLastInTransaction = true;
+                List<byte> bytesList = new List<byte>();
 
                 while (true)
                 {
@@ -50,20 +48,18 @@ namespace Server
 
                     var message = serverQueue.EndPeek(asyncReceive);
                     serverQueue.ReceiveById(message.Id);
-                    var filename = message.Label.Split('\\').Last();
-                    var a = message.IsFirstInTransaction;
-                    var b = message.IsLastInTransaction;
+                    var labelParts = message.Label.Split('|');
+                    var filename = labelParts[0].Split('\\').Last();
+                    var curentNumber = int.Parse(labelParts[1]);
+                    var numberOfParts = int.Parse(labelParts[2]);
 
-
-                    File.WriteAllBytes(Path.Combine(ServerDirectoryName, filename), (byte[])message.Body);
-                    Console.WriteLine($"Server received file {filename} and save to directory {ServerDirectoryName}");
-
-                    var enumerator = serverQueue.GetMessageEnumerator2();
-
-
-                    var formatter = new BinaryMessageFormatter();
-
-
+                    bytesList.AddRange((byte[])message.Body);
+                    if (curentNumber == numberOfParts)
+                    {
+                        File.WriteAllBytes(Path.Combine(ServerDirectoryName, filename), bytesList.ToArray());
+                        bytesList = new List<byte>();
+                        Console.WriteLine($"Server received file {filename} and save to directory {ServerDirectoryName}");
+                    }
                 }
             }
 
