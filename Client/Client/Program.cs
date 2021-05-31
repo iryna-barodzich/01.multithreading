@@ -14,6 +14,7 @@ namespace Client
         static Thread workThread;
         static string ServerQueueName = @".\Private$\server_task3";
         static string WatcherDirectoryName = @"D:\Task3_Messaging";
+        static int ChunkSize = 4;
         static void Main()
         {
             using (var watcher = new FileSystemWatcher(WatcherDirectoryName))
@@ -67,18 +68,15 @@ namespace Client
 
                 var filename = obj.ToString();
                 var bytes = FileToByteArray(obj.ToString());
-                var chunkCount = 3;
                 var size = bytes.Length;
-                var blockSize = 4;
 
-                byte[][] blocks = new byte[(bytes.Length + 4 - 1) / blockSize][];
+                byte[][] blocks = new byte[(bytes.Length + 4 - 1) / ChunkSize][];
 
-                for (int i = 0, j = 0; i < blocks.Length; i++, j += blockSize)
+                for (int i = 0, j = 0; i < blocks.Length; i++, j += ChunkSize)
                 {
-                    blocks[i] = new byte[Math.Min(blockSize, bytes.Length - j)];
+                    blocks[i] = new byte[Math.Min(ChunkSize, bytes.Length - j)];
                     Array.Copy(bytes, j, blocks[i], 0, blocks[i].Length);
                 }
-
 
                 var transaction = new MessageQueueTransaction();
                 try
