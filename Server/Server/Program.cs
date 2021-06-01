@@ -49,13 +49,13 @@ namespace Server
                     var message = serverQueue.EndPeek(asyncReceive);
                     serverQueue.ReceiveById(message.Id);
                     var labelParts = message.Label.Split('|');
-                    var filename = labelParts[0].Split('\\').Last();
                     var curentNumber = int.Parse(labelParts[1]);
                     var numberOfParts = int.Parse(labelParts[2]);
 
                     bytesList.AddRange((byte[])message.Body);
                     if (curentNumber == numberOfParts)
                     {
+                        var filename = labelParts[0].Split('\\').Last();
                         File.WriteAllBytes(Path.Combine(ServerDirectoryName, filename), bytesList.ToArray());
                         bytesList = new List<byte>();
                         Console.WriteLine($"Server received file {filename} and save to directory {ServerDirectoryName}");
