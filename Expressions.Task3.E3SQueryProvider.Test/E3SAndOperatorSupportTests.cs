@@ -8,9 +8,11 @@
  */
 
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
 using Expressions.Task3.E3SQueryProvider.Models.Entities;
+using Expressions.Task3.E3SQueryProvider.Models.Request;
 using Xunit;
 
 namespace Expressions.Task3.E3SQueryProvider.Test
@@ -33,9 +35,21 @@ namespace Expressions.Task3.E3SQueryProvider.Test
                 // Operator between queries is AND, in other words result set will fit to both statements above
               ],
              */
-
+            var result = new FtsQueryRequest
+            {
+                Statements = new List<Statement>
+                {
+                    new Statement {
+                        Query =  "Workstation:(EPRUIZHW006)"
+                    },
+                    new Statement {
+                        Query =  "Manager:(John*)"
+                    },
+                },
+            };
             // todo: create asserts for this test by yourself, because they will depend on your final implementation
-            throw new NotImplementedException("Please implement this test and the appropriate functionality");
+            var translated = translator.TranslateToObj(expression);
+            Assert.Equal(result, translated);
         }
 
         #endregion
