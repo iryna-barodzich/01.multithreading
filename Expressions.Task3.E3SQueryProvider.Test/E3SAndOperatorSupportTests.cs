@@ -13,6 +13,7 @@ using System.Linq;
 using System.Linq.Expressions;
 using Expressions.Task3.E3SQueryProvider.Models.Entities;
 using Expressions.Task3.E3SQueryProvider.Models.Request;
+using Newtonsoft.Json;
 using Xunit;
 
 namespace Expressions.Task3.E3SQueryProvider.Test
@@ -27,15 +28,8 @@ namespace Expressions.Task3.E3SQueryProvider.Test
             var translator = new ExpressionToFtsRequestTranslator();
             Expression<Func<IQueryable<EmployeeEntity>, IQueryable<EmployeeEntity>>> expression
                 = query => query.Where(e => e.Workstation == "EPRUIZHW006" && e.Manager.StartsWith("John"));
-            /*
-             * The expression above should be converted to the following FTSQueryRequest and then serialized inside FTSRequestGenerator:
-             * "statements": [
-                { "query":"Workstation:(EPRUIZHW006)"},
-                { "query":"Manager:(John*)"}
-                // Operator between queries is AND, in other words result set will fit to both statements above
-              ],
-             */
-            var result = new FtsQueryRequest
+
+            var testObj = new FtsQueryRequest
             {
                 Statements = new List<Statement>
                 {
@@ -47,9 +41,12 @@ namespace Expressions.Task3.E3SQueryProvider.Test
                     },
                 },
             };
-            // todo: create asserts for this test by yourself, because they will depend on your final implementation
+            var testString = JsonConvert.SerializeObject(testObj);
+
             var translated = translator.TranslateToObj(expression);
-            Assert.Equal(result, translated);
+            var translatedString = JsonConvert.SerializeObject(translated);
+
+            Assert.Equal(testString, translatedString);
         }
 
         #endregion
