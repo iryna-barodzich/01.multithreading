@@ -56,9 +56,9 @@ namespace ProfileSample.Controllers
                         };
 
                         context.ImgSources.Add(entity);
-                        context.SaveChanges();
                     }
-                } 
+                }
+                context.SaveChanges();
             }
 
             return RedirectToAction("Index");

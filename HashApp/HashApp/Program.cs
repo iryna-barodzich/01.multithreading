@@ -7,8 +7,8 @@ namespace HashApp
     {
         static void Main(string[] args)
         {
-            Console.WriteLine("Started");
-            Console.WriteLine("Enter password");
+            //Console.WriteLine("Started");
+            //Console.WriteLine("Enter password");
             string passwordText = Console.ReadLine();
 
             byte[] salt = BitConverter.GetBytes(DateTime.Now.Ticks + DateTime.Now.Ticks);
@@ -16,16 +16,14 @@ namespace HashApp
             salt.CopyTo(salt2, 0);
             var hash = GeneratePasswordHashUsingSalt(passwordText, salt2);
 
-            Console.WriteLine(hash);
-            Console.WriteLine("Finished");
+            //Console.WriteLine(hash);
+            //Console.WriteLine("Finished");
             Console.ReadKey();
         }
 
         public static string GeneratePasswordHashUsingSalt(string passwordText, byte[] salt)
         {
-            var iterate = 10000; 
-            var pbkdf2 = new Rfc2898DeriveBytes(passwordText, salt, iterate); 
-            byte[] hash = pbkdf2.GetBytes(20);
+            byte[] hash = new Rfc2898DeriveBytes(passwordText, salt, 10000).GetBytes(20);
 
             byte[] hashBytes = new byte[36]; 
             
