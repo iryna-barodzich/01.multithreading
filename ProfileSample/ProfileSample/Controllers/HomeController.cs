@@ -1,5 +1,7 @@
-﻿using System.IO;
+﻿using System.Data.Entity;
+using System.IO;
 using System.Linq;
+using System.Threading.Tasks;
 using System.Web.Mvc;
 using ProfileSample.DAL;
 using ProfileSample.Models;
@@ -8,15 +10,15 @@ namespace ProfileSample.Controllers
 {
     public class HomeController : Controller
     {
-        public ActionResult Index()
+        public async Task<ActionResult> Index()
         {
             var context = new ProfileSampleEntities();
 
-            var model = context.ImgSources.Take(20).Select(s => new ImageModel()
+            var model = await context.ImgSources.Take(20).Select(s => new ImageModel()
             {
                 Name = s.Name,
                 Data = s.Data
-            }).ToArray();     
+            }).ToArrayAsync();     
 
             return View(model);
         }
