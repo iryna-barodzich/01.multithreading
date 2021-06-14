@@ -11,7 +11,7 @@ namespace HashApp
             //Console.WriteLine("Enter password");
             string passwordText = Console.ReadLine();
 
-            byte[] salt = BitConverter.GetBytes(DateTime.Now.Ticks + DateTime.Now.Ticks);
+            byte[] salt = BitConverter.GetBytes(DateTime.Now.Ticks);
             var salt2 = new byte[16];
             salt.CopyTo(salt2, 0);
             var hash = GeneratePasswordHashUsingSalt(passwordText, salt2);
@@ -25,10 +25,10 @@ namespace HashApp
         {
             byte[] hash = new Rfc2898DeriveBytes(passwordText, salt, 10000).GetBytes(20);
 
-            byte[] hashBytes = new byte[36]; 
-            
-            Array.Copy(salt, 0, hashBytes, 0, 16); 
-            Array.Copy(hash, 0, hashBytes, 16, 20);
+            byte[] hashBytes = new byte[36];
+
+            System.Buffer.BlockCopy(salt, 0, hashBytes, 0, 16);
+            System.Buffer.BlockCopy(hash, 0, hashBytes, 16, 20);
 
             var passwordHash = Convert.ToBase64String(hashBytes);
 
