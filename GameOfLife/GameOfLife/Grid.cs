@@ -36,9 +36,9 @@ namespace GameOfLife
                     nextGenerationCells[i, j] = new Cell(i, j, 0, false);
                 }
 
-            SetRandomPattern();
+            // SetRandomPattern();
             InitCellsVisuals();
-            UpdateGraphics();
+            // UpdateGraphics(); - no need to repeat it twice
             
         }
 
@@ -86,21 +86,26 @@ namespace GameOfLife
         public void InitCellsVisuals()
         {
             for (int i = 0; i < SizeX; i++)
+            {
                 for (int j = 0; j < SizeY; j++)
                 {
+                    cells[i, j].IsAlive = GetRandomBoolean(); // SetRandomPattern part
                     cellsVisuals[i, j] = new Ellipse();
                     cellsVisuals[i, j].Width = cellsVisuals[i, j].Height = 5;
                     double left = cells[i, j].PositionX;
                     double top = cells[i, j].PositionY;
                     cellsVisuals[i, j].Margin = new Thickness(left, top, 0, 0);
-                    cellsVisuals[i, j].Fill = Brushes.Gray;
+                    // cellsVisuals[i, j].Fill = Brushes.Gray;
                     drawCanvas.Children.Add(cellsVisuals[i, j]);
 
                     cellsVisuals[i, j].MouseMove += MouseMove;
                     cellsVisuals[i, j].MouseLeftButtonDown += MouseMove;
-                 }
-            UpdateGraphics();
-                    
+
+                    cellsVisuals[i, j].Fill = cells[i, j].IsAlive
+                              ? (cells[i, j].Age < 2 ? Brushes.White : Brushes.DarkGray)
+                              : Brushes.Gray; // UpdateGraphics part
+                }
+            }                    
         }
         
 
@@ -181,30 +186,28 @@ namespace GameOfLife
 
             int count = CountNeighbors(row, column);
 
-            if (isAlive && count < 2)
+            if(isAlive)
             {
-                isAlive = false;
-                age = 0;
-            }
+                if(count < 2)
+                {
+                    isAlive = false;
+                    age = 0;
+                } else if (count == 2 || count == 3)
+                {
+                    cells[row, column].Age++;
+                    isAlive = true;
+                    age = cells[row, column].Age;
+                } else if (count > 3)
+                {
+                    isAlive = false;
+                    age = 0;
+                }
 
-            if (isAlive && (count == 2 || count == 3))
-            {
-                cells[row, column].Age++;
-                isAlive = true;
-                age = cells[row, column].Age;
-            }
-
-            if (isAlive && count > 3)
-            {
-                isAlive = false;
-                age = 0;
-            }
-
-            if (!isAlive && count == 3)
+            } else if (!isAlive && count == 3)
             {
                 isAlive = true;
-                age = 0;
-            }
+                 age = 0;
+             }
         }
 
         public int CountNeighbors(int i, int j)
