@@ -8,6 +8,7 @@ using System;
 using System.CodeDom.Compiler;
 using System.ComponentModel;
 using System.Diagnostics;
+using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Controls.Primitives;
@@ -17,12 +18,26 @@ namespace MyCalculatorv1
 {
   public partial class MainWindow : Window, IComponentConnector
   {
-    internal TextBox tb;
-    private bool _contentLoaded;
+   // internal TextBox tb;
+    // private bool _contentLoaded;
 
     public MainWindow() => this.InitializeComponent();
 
-    private void Button_Click_1(object sender, RoutedEventArgs e) => this.tb.Text += ((Button) sender).Content.ToString();
+
+        private void Button_Click_1(object sender, RoutedEventArgs e) {
+            var content = ((Button)sender).Content.ToString(); 
+            var symbols = new char[] { '+', '-', '*', '/' };
+			if (symbols.Any(s => this.tb.Text.EndsWith(s.ToString())) && symbols.Any(s => content == s.ToString()))
+			{
+				this.tb.Text = this.tb.Text.TrimEnd(symbols);
+                this.tb.Text += content;
+			} else if (this.tb.Text.Contains('=')) {
+                this.tb.Text = string.Empty;
+            } else
+             {
+                this.tb.Text += content;
+            }
+        }
 
     private void Result_click(object sender, RoutedEventArgs e) => this.result();
 
@@ -71,86 +86,6 @@ namespace MyCalculatorv1
       if (this.tb.Text.Length <= 0)
         return;
       this.tb.Text = this.tb.Text.Substring(0, this.tb.Text.Length - 1);
-    }
-
-    [DebuggerNonUserCode]
-    [GeneratedCode("PresentationBuildTasks", "4.0.0.0")]
-    public void InitializeComponent()
-    {
-      if (this._contentLoaded)
-        return;
-      this._contentLoaded = true;
-      Application.LoadComponent((object) this, new Uri("/MyCalculatorv1;component/mainwindow.xaml", UriKind.Relative));
-    }
-
-    [DebuggerNonUserCode]
-    [GeneratedCode("PresentationBuildTasks", "4.0.0.0")]
-    [EditorBrowsable(EditorBrowsableState.Never)]
-    void IComponentConnector.Connect(int connectionId, object target)
-    {
-      switch (connectionId)
-      {
-        case 1:
-          ((ButtonBase) target).Click += new RoutedEventHandler(this.Button_Click_1);
-          break;
-        case 2:
-          this.tb = (TextBox) target;
-          break;
-        case 3:
-          ((ButtonBase) target).Click += new RoutedEventHandler(this.Button_Click_1);
-          break;
-        case 4:
-          ((ButtonBase) target).Click += new RoutedEventHandler(this.Button_Click_1);
-          break;
-        case 5:
-          ((ButtonBase) target).Click += new RoutedEventHandler(this.Button_Click_1);
-          break;
-        case 6:
-          ((ButtonBase) target).Click += new RoutedEventHandler(this.Button_Click_1);
-          break;
-        case 7:
-          ((ButtonBase) target).Click += new RoutedEventHandler(this.Button_Click_1);
-          break;
-        case 8:
-          ((ButtonBase) target).Click += new RoutedEventHandler(this.Button_Click_1);
-          break;
-        case 9:
-          ((ButtonBase) target).Click += new RoutedEventHandler(this.Button_Click_1);
-          break;
-        case 10:
-          ((ButtonBase) target).Click += new RoutedEventHandler(this.Button_Click_1);
-          break;
-        case 11:
-          ((ButtonBase) target).Click += new RoutedEventHandler(this.Button_Click_1);
-          break;
-        case 12:
-          ((ButtonBase) target).Click += new RoutedEventHandler(this.Button_Click_1);
-          break;
-        case 13:
-          ((ButtonBase) target).Click += new RoutedEventHandler(this.Button_Click_1);
-          break;
-        case 14:
-          ((ButtonBase) target).Click += new RoutedEventHandler(this.Button_Click_1);
-          break;
-        case 15:
-          ((ButtonBase) target).Click += new RoutedEventHandler(this.Result_click);
-          break;
-        case 16:
-          ((ButtonBase) target).Click += new RoutedEventHandler(this.Button_Click_1);
-          break;
-        case 17:
-          ((ButtonBase) target).Click += new RoutedEventHandler(this.Off_Click_1);
-          break;
-        case 18:
-          ((ButtonBase) target).Click += new RoutedEventHandler(this.Del_Click);
-          break;
-        case 19:
-          ((ButtonBase) target).Click += new RoutedEventHandler(this.R_Click);
-          break;
-        default:
-          this._contentLoaded = true;
-          break;
-      }
     }
   }
 }
