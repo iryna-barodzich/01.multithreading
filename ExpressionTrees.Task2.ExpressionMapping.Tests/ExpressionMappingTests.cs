@@ -14,7 +14,13 @@ namespace ExpressionTrees.Task2.ExpressionMapping.Tests
             var mapGenerator = new MappingGenerator();
             var mapper = mapGenerator.Generate<Foo, Bar>();
 
-            var res = mapper.Map(new Foo());
+            var res = mapper.Map(new Foo() { Id = 1, Name = "Dan" });
+            var bar = new Bar() { Id = 1, Name = "Dan" };
+
+            var resString = res.Id + res.Name;
+            var barString = bar.Id + bar.Name;
+
+            Assert.AreEqual(resString, barString);
         }
     }
 }
