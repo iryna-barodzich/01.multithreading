@@ -24,6 +24,7 @@ namespace Composite.Task2
         public string ConvertToString(int depth = 0)
         {
             var builder = new StringBuilder();
+            builder.Append(' ', depth);
             builder.Append($"<form name='{this.name}'>");
             foreach(var component in FormComponents)
             {
@@ -36,7 +37,7 @@ namespace Composite.Task2
                 builder.Append(component.ConvertToString(depth));
             }
             builder.Append('\n');
-            builder.Append(' ', depth + 1);
+            builder.Append(' ', depth);
             builder.Append("</form>");
 
             return builder.ToString();
