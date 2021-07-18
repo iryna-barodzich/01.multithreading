@@ -1,14 +1,10 @@
 ﻿using System;
 
-namespace StockExchange.Task3
+namespace StockExchange.Task2
 {
-    public class RedSocks: Player
+    public class RossSocks : Player
     {
-        public int SoldShares { get; }
-
-        public int BoughtShares { get; }
-
-        public RedSocks()
+        public RossSocks()
         {
         }
 

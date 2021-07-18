@@ -2,7 +2,7 @@
 
 namespace StockExchange.Task2
 {
-    public class Blossomers
+    public class Blossomers : Player
     {
         public Blossomers() 
         { 
@@ -10,12 +10,12 @@ namespace StockExchange.Task2
 
         public bool SellOffer(string stockName, int numberOfShares)
         {
-            throw new NotImplementedException();
+            return this.Mediator.SellOffer(stockName, numberOfShares, this);
         }
 
         public bool BuyOffer(string stockName, int numberOfShares)
         {
-            throw new NotImplementedException();
+            return this.Mediator.BuyOffer(stockName, numberOfShares, this);
         }
     }
 }

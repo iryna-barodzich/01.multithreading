@@ -9,6 +9,7 @@ namespace StockExchange.Task2.Tests
         StockPlayersFactory playersFactory;
         RedSocks redSocks;
         Blossomers blossomers;
+        RossSocks rossSocks;
 
         [TestInitialize]
         public void Startup()
@@ -19,6 +20,7 @@ namespace StockExchange.Task2.Tests
 
             redSocks = players.RedSocks;
             blossomers = players.Blossomers;
+            rossSocks = players.RossSocks;
         }
 
         [TestMethod]
