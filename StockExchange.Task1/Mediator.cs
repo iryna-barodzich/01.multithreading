@@ -19,14 +19,14 @@ namespace StockExchange.Task1
         public bool SellOffer(string stockName, int numberOfShares, Player player)
         {
             var seller = player.GetType().Name;
-            var buyRequests = BuyRequests.Where(b => b.Name == stockName && b.Dealer != seller);
+            var buyRequests = BuyRequests.Where(b => b.Name == stockName && b.NumberOfShares == numberOfShares && b.Dealer != seller);
             if (buyRequests.Any())
             {
-                MakeSellDeal(buyRequests.First(), stockName, numberOfShares, seller);
+                BuyRequests.Remove(buyRequests.First());
                 return true;
             } else
             {
-                CreateSellOffer(stockName, numberOfShares, seller);
+                SellRequests.Add(new DealRequest { Name = stockName, NumberOfShares = numberOfShares, Dealer = seller });
                 return false;
             }
         }
@@ -34,71 +34,17 @@ namespace StockExchange.Task1
         public bool BuyOffer(string stockName, int numberOfShares, Player player)
         {
             var buyer = player.GetType().Name;
-            var sellRequests = SellRequests.Where(b => b.Name == stockName && b.Dealer != buyer);
+            var sellRequests = SellRequests.Where(b => b.Name == stockName && b.NumberOfShares == numberOfShares && b.Dealer != buyer);
             if (sellRequests.Any())
             {
-                MakeSellDeal(sellRequests.First(), stockName, numberOfShares, buyer);
+                SellRequests.Remove(sellRequests.First());
                 return true;
             }
             else
             {
-                CreateBuyOffer(stockName, numberOfShares, buyer);
+                BuyRequests.Add(new DealRequest { Name = stockName, NumberOfShares = numberOfShares, Dealer = buyer });
                 return false;
             }
-        }
-
-        private void CreateSellOffer(string stockName, int numberOfShares, string seller)
-        {
-            var request = this.SellRequests.Where(s => s.Name == stockName && s.Dealer == seller);
-            if(request.Any())
-            {
-                request.First().NumberOfShares += numberOfShares;
-            } else
-            {
-                SellRequests.Add(new DealRequest { Name = stockName, NumberOfShares = numberOfShares, Dealer = seller });
-            }
-        }
-
-        private void CreateBuyOffer(string stockName, int numberOfShares, string buyer)
-        {
-            var request = this.BuyRequests.Where(s => s.Name == stockName && s.Dealer == buyer);
-            if (request.Any())
-            {
-                request.First().NumberOfShares += numberOfShares;
-            }
-            else
-            {
-                BuyRequests.Add(new DealRequest { Name = stockName, NumberOfShares = numberOfShares, Dealer = buyer });
-            }
-        }
-
-        private void MakeSellDeal(DealRequest buyRequest, string stockName, int numberOfShares, string seller)
-        {
-            var numberToBuy = Math.Min(buyRequest.NumberOfShares, numberOfShares);
-
-            CutOffer(buyRequest, numberToBuy);
-
-            if (numberToBuy < numberOfShares)
-            {
-                CreateSellOffer(stockName, numberOfShares - numberToBuy, seller);
-            }
-        }
-
-        private void MakeBuyDeal(DealRequest sellRequest, string stockName, int numberOfShares, string seller)
-        {
-            var numberToSell = Math.Min(sellRequest.NumberOfShares, numberOfShares);
-
-            CutOffer(sellRequest, numberToSell);
-
-            if (numberToSell < numberOfShares)
-            {
-                CreateBuyOffer(stockName, numberOfShares - numberToSell, seller);
-            }
-        }
-
-        private void CutOffer(DealRequest buyRequest, int numberOfShares)
-        {
-            buyRequest.NumberOfShares -= numberOfShares;
         }
     }
 }
