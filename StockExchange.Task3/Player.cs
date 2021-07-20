@@ -12,14 +12,20 @@ namespace StockExchange.Task3
 
         public int BoughtShares { get; private set; }
 
-        public void AddSoldCount(int count)
+        public void AddSoldCount(string name, int count)
         {
-            this.SoldShares += count;
+            if (this.GetType().Name == name)
+            {
+                this.SoldShares += count;
+            }
         }
 
-        public void AddBoughtCount(int count)
+        public void AddBoughtCount(string name, int count)
         {
-            this.BoughtShares += count;
+            if (this.GetType().Name == name)
+            {
+                this.BoughtShares += count;
+            }
         }
     }
 }

@@ -33,10 +33,7 @@ namespace StockExchange.Task3
         {
             foreach (IPlayer observer in observers)
             {
-                if (observer.GetType().Name == name)
-                {
-                    observer.AddBoughtCount(count);
-                }
+                observer.AddBoughtCount(name, count);
             }
         }
 
@@ -44,10 +41,7 @@ namespace StockExchange.Task3
         {
             foreach (IPlayer observer in observers)
             {
-                if (observer.GetType().Name == name)
-                {
-                    observer.AddSoldCount(count);
-                }
+                observer.AddSoldCount(name, count);
             }
         }
 

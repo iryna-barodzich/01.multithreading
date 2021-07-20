@@ -8,8 +8,8 @@ namespace StockExchange.Task3
     {
         public Mediator Mediator { get; set; }
 
-        public void AddSoldCount(int count);
+        public void AddSoldCount(string name, int count);
 
-        public void AddBoughtCount(int count);
+        public void AddBoughtCount(string name, int count);
     }
 }
