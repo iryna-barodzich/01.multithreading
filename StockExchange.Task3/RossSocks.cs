@@ -10,6 +10,7 @@ namespace StockExchange.Task3
 
         public RossSocks()
         {
+            this.SoldShares += 2;
         }
 
         public bool SellOffer(string stockName, int numberOfShares)

@@ -2,7 +2,7 @@
 {
     public class Players
     {
-        public RedSocks RedSocks { get; set; }
+        public RedSocks RedSocks { get;  set; }
         public Blossomers Blossomers { get; set; }
 
         public RossSocks RossSocks { get; set; }

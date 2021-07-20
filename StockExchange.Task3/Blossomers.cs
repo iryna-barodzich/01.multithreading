@@ -4,10 +4,6 @@ namespace StockExchange.Task3
 {
     public class Blossomers: Player
     {
-        public int SoldShares { get; }
-
-        public int BoughtShares { get; }
-
         public Blossomers() 
         { 
         }

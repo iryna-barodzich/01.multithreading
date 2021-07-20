@@ -5,16 +5,51 @@ using System.Text;
 
 namespace StockExchange.Task3
 {
-    public class Mediator
+    public class Mediator : IObservable
     {
+        private List<IPlayer> observers;
         public Mediator()
         {
             this.SellRequests = new List<DealRequest>();
             this.BuyRequests = new List<DealRequest>();
+            this.observers = new List<IPlayer>();
         }
+
+        public void AddObserver(IPlayer o)
+        {
+            observers.Add(o);
+        }
+
         public List<DealRequest> SellRequests { get; set; }
 
         public List<DealRequest> BuyRequests { get; set; }
+
+        public void RemoveObserver(IPlayer o)
+        {
+            observers.Remove(o);
+        }
+
+        public void NotifyBuyer(string name, int count)
+        {
+            foreach (IPlayer observer in observers)
+            {
+                if (observer.GetType().Name == name)
+                {
+                    observer.AddBoughtCount(count);
+                }
+            }
+        }
+
+        public void NotifySeller(string name, int count)
+        {
+            foreach (IPlayer observer in observers)
+            {
+                if (observer.GetType().Name == name)
+                {
+                    observer.AddSoldCount(count);
+                }
+            }
+        }
 
         public bool SellOffer(string stockName, int numberOfShares, Player player)
         {
@@ -22,6 +57,8 @@ namespace StockExchange.Task3
             var buyRequests = BuyRequests.Where(b => b.Name == stockName && b.NumberOfShares == numberOfShares && b.Dealer != seller);
             if (buyRequests.Any())
             {
+                NotifyBuyer(buyRequests.First().Dealer, numberOfShares);
+                NotifySeller(seller, numberOfShares);
                 BuyRequests.Remove(buyRequests.First());
                 return true;
             } else
@@ -37,6 +74,8 @@ namespace StockExchange.Task3
             var sellRequests = SellRequests.Where(b => b.Name == stockName && b.NumberOfShares == numberOfShares && b.Dealer != buyer);
             if (sellRequests.Any())
             {
+                NotifyBuyer(buyer, numberOfShares);
+                NotifySeller(sellRequests.First().Dealer, numberOfShares);
                 SellRequests.Remove(sellRequests.First());
                 return true;
             }
